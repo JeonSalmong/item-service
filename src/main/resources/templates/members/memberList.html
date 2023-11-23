@@ -1,0 +1,31 @@
+<head th:replace="~{fragment/head}"></head>
+<body>
+<div th:replace="~{fragment/bodyHeader}"></div>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <button class="btn btn-primary float-end" onclick="location.href='addMemberForm.html'"
+                    th:onclick="|location.href='@{/members/add}'|" type="button">회원 등록
+            </button>
+        </div>
+    </div>
+    <div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>이름</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="member : ${members}">
+                <td th:text="${member.id}"></td>
+                <td th:text="${member.name}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div> <!-- /container -->
+<div th:replace="~{fragment/footer}"></div>
+</body>
+</html>
