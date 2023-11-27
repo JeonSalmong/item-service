@@ -50,4 +50,5 @@ public class SpringBeanConfig {
     public ItemRepository itemRepository() {
         return new JpaItemRepository(em);
     }
+
 }

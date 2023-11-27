@@ -1,3 +1,6 @@
+url: prod.db.com
+username: prod_user
+password: prod_pw
 server:
   servlet:
     session:

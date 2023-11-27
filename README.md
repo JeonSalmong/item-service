@@ -35,4 +35,9 @@ springboot sample project (spring version 3.0.12)
 * UserDetail 적용(Session)
 * OAuth 추가 적용 예정
 * API Controller 대상 JWT 적용 예정
+#### AutoConfiguration
+* memory.jar libs 추가
+#### 외부설정과 프로필 적용
+* local, dev, prod yml 분리
+* -Dspring.profiles.active 설정에 따른 pay 로직(임시) 분기 처리
 

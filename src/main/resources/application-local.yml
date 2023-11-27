@@ -1,0 +1,47 @@
+url: local.db.com
+username: local_user
+password: local_pw
+server:
+  servlet:
+    session:
+      tracking-modes: cookie
+      timeout: 1800
+  error:
+    whitelabel:
+      enabled: false
+
+#HTTP \uC694\uCCAD \uBA54\uC2DC\uC9C0\uB97C \uD655\uC778\uD560 \uC218 \uC788\uB2E4.
+#logging.level.org.apache.coyote.http11: debug
+
+jwt:
+  secret:
+    key: "rkGU45258GGhiolLO2465TFY5345kGU45258GGhiolLO2465TFY5345"
+
+file:
+  dir: "C:/Study/springMVC/server_file/"
+spring:
+  mustache:
+    cache: false
+  messages:
+    basename: messages,errors
+  servlet:
+    multipart:
+      max-file-size: 1MB
+      max-request-size: 10MB
+  #      enabled: false
+  datasource:
+    url: "jdbc:h2:tcp://localhost/~/test"
+    driver-class-name: org.h2.Driver
+    username: sa
+  jpa:
+    show-sql: true
+    hibernate.ddl-auto: none
+#    hibernate.ddl-auto: create
+    #hibernate.ddl-auto=create-drop
+    #hibernate.ddl-auto=update
+    #hibernate.ddl-auto=validate //h2db \uC624\uB958\uB0A8
+    #DDL \uC804\uB7B5
+    #\uAC1C\uBC1C\uCD08\uAE30 : create or update
+    #\uAC1C\uBC1C/\uD14C\uC2A4\uD2B8\uC11C\uBC84 : update or validate
+    #\uC6B4\uC601\uC11C\uBC84 : validate or none
+

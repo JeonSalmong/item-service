@@ -8,15 +8,15 @@ import apps.itemservice.domain.entity.order.Orders;
 import apps.itemservice.service.item.ItemService;
 import apps.itemservice.service.member.MemberService;
 import apps.itemservice.service.order.OrderService;
-import apps.itemservice.web.controller.dto.ItemSaveForm;
+import apps.itemservice.service.order.PayService;
 import apps.itemservice.web.controller.dto.MessageDto;
 import apps.itemservice.web.controller.dto.OrderForm;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -24,6 +24,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.util.List;
 
+
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/order")
@@ -32,6 +34,7 @@ public class OrderController {
     private final OrderService orderService;
     private final MemberService memberService;
     private final ItemService itemService;
+    private final PayService payService;
 
     @GetMapping("/add")
     public String order(@ModelAttribute("order") OrderForm order, Model model) {
@@ -71,6 +74,21 @@ public class OrderController {
 
         try {
             orderService.cancelOrder(orderId);
+        } catch (RuntimeException e) {
+            MessageDto message = new MessageDto(e.getMessage(), "/order/orders", RequestMethod.GET, null);
+            return showMessageAndRedirect(message, model);
+        }
+
+        return "redirect:/order/orders";
+    }
+
+    @RequestMapping(value = "/orders/{orderId}/pay")
+    public String processPayBuy(@PathVariable("orderId") Long orderId, Model model) {
+
+        try {
+            Orders order = orderService.fineOne(orderId);
+            payService.pay(order.getTotalPrice());
+            log.info("Pay 임시로직 실행");
         } catch (RuntimeException e) {
             MessageDto message = new MessageDto(e.getMessage(), "/order/orders", RequestMethod.GET, null);
             return showMessageAndRedirect(message, model);

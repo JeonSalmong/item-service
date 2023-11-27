@@ -40,6 +40,7 @@
             <th>배송상태</th>
             <th></th>
             <th></th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -61,6 +62,11 @@
                 <a th:if="${#strings.equals(order.status,'ORDER')}"
                    th:href="@{/order/orders/{orderId}/cancel(orderId=${order.id})}"
                    class="btn btn-danger">취소</a>
+            </td>
+            <td>
+                <a th:if="${#strings.equals(order.status,'ORDER')}"
+                   th:href="@{/order/orders/{orderId}/pay(orderId=${order.id})}"
+                   class="btn btn-danger">결재</a>
             </td>
         </tr>
         </tbody>

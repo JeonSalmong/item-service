@@ -1,12 +1,14 @@
-package apps.itemservice.web.config;
+package apps.itemservice.web.config.init;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import apps.itemservice.domain.entity.item.Item;
 import apps.itemservice.repository.item.MemoryItemRepository;
 import apps.itemservice.repository.member.MemoryMemberRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class TestDataInit {
@@ -19,6 +21,7 @@ public class TestDataInit {
      */
     @PostConstruct
     public void init() {
+        log.info("spring boot init() 실행");
         memoryItemRepository.save(new Item("itemA", 10000, 10));
         memoryItemRepository.save(new Item("itemB", 20000, 20));
 

@@ -60,6 +60,11 @@ public class OrderService {
     }
 
     /** 주문 검색 */
+    public Orders fineOne(Long orderId) {
+        return orderRepository.fineOne(orderId);
+    }
+
+    /** 주문 검색 */
     public List<Orders> findOrders(OrderSearch orderSearch) {
         return orderRepository.findAll(orderSearch);
     }

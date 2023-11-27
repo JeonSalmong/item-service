@@ -39,7 +39,8 @@ public class WebSecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher( "/css/**"))
                 .requestMatchers(new AntPathRequestMatcher( "/js/**"))
                 .requestMatchers(new AntPathRequestMatcher( "/img/**"))
-                .requestMatchers(new AntPathRequestMatcher( "/lib/**"));
+                .requestMatchers(new AntPathRequestMatcher( "/lib/**"))
+                .requestMatchers(new AntPathRequestMatcher( "/memory/**"));
     }
 
 
@@ -56,7 +57,7 @@ public class WebSecurityConfig {
                                 .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
-                        .loginPage("/")                 //로그인페이지 controller path 설정하지 않으면 내장 로그인창이 뜸
+                        .loginPage("/login")                 //로그인페이지 controller path 설정하지 않으면 내장 로그인창이 뜸
                         .loginProcessingUrl("/login-process")   // [B] submit 받을 url
                         .usernameParameter("loginId")
                         .passwordParameter("password")
@@ -67,4 +68,5 @@ public class WebSecurityConfig {
 
         return http.build();
     }
+
 }
