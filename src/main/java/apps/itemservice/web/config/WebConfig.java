@@ -10,7 +10,9 @@ import apps.itemservice.web.controller.common.resolver.argument.LoginMemberArgum
 import apps.itemservice.web.controller.common.resolver.exception.MyHandlerExceptionResolver;
 import apps.itemservice.web.controller.common.resolver.exception.UserHandlerExceptionResolver;
 import jakarta.servlet.Filter;
+import org.springframework.boot.actuate.web.exchanges.InMemoryHttpExchangeRepository;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -89,5 +91,14 @@ public class WebConfig implements WebMvcConfigurer {
 
         // 포맷터 추가
         registry.addFormatter(new MyNumberFormatter());
+    }
+
+    /**
+     * HTTP 요청 응답 기록
+     * @return
+     */
+    @Bean
+    public InMemoryHttpExchangeRepository httpExchangeRepository() {
+        return new InMemoryHttpExchangeRepository();
     }
 }

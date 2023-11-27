@@ -40,4 +40,9 @@ springboot sample project (spring version 3.0.12)
 #### 외부설정과 프로필 적용
 * local, dev, prod yml 분리
 * -Dspring.profiles.active 설정에 따른 pay 로직(임시) 분기 처리
+#### 액츄에이터 적용
+* 기본path actuator -> manage로 변경 (Security에서 Admin만 접속 되도록 설정)
+#### 모니터링
+* springboot -> 프로메테우스(DB) -> 그라파나 적용
+* springbatch (push)-> 프로메테우스 push gateway <-(pull) 프로메테우스 -> 그라파나
 

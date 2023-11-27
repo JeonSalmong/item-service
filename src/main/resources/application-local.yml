@@ -45,3 +45,30 @@ spring:
     #\uAC1C\uBC1C/\uD14C\uC2A4\uD2B8\uC11C\uBC84 : update or validate
     #\uC6B4\uC601\uC11C\uBC84 : validate or none
 
+management:
+  info:
+    java:
+      enabled: true
+    os:
+      enabled: true
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      show-components: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+        exclude: "env,beans"
+      base-path: "/manage"
+    jmx:
+      exposure:
+        include: "health,info"
+logging:
+  level:
+    apps:
+      itemservice:
+        web:
+          controller: debug
+

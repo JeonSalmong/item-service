@@ -33,6 +33,7 @@ public class WebSecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher( "/members/add"))
                 .requestMatchers(new AntPathRequestMatcher( "/error/**"))
                 .requestMatchers(new AntPathRequestMatcher( "/error-page/**"))
+                .requestMatchers(new AntPathRequestMatcher( "/manage/prometheus"))
                 .requestMatchers(new AntPathRequestMatcher( "/api/**"))
                 .requestMatchers(new AntPathRequestMatcher( "/test/**"))
                 .requestMatchers(new AntPathRequestMatcher( "/*.ico"))
@@ -54,6 +55,7 @@ public class WebSecurityConfig {
                                 .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
                                 .requestMatchers(new MvcRequestMatcher(introspector, "/")).permitAll()
                                 .requestMatchers(mvcMatcherBuilder.pattern("/order/orders")).hasRole("ADMIN")       //권한 없는 경우 403
+                                .requestMatchers(mvcMatcherBuilder.pattern("/manage/**")).hasRole("ADMIN")       //권한 없는 경우 403
                                 .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
