@@ -18,7 +18,15 @@ configurations {
 }
 
 repositories {
-	mavenCentral()
+	mavenLocal()
+	maven {
+		credentials {
+			username = mavenUsername
+			password = mavenPassword
+		}
+		url = uri('https://pkgs.dev.azure.com/dlcon/_packaging/dlcon/maven/v1/')
+		allowInsecureProtocol = true
+	}
 }
 
 dependencies {
@@ -39,7 +47,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-batch'
 	implementation 'io.micrometer:micrometer-registry-prometheus'
+	implementation 'io.prometheus:simpleclient_pushgateway'
 }
 
 tasks.named('test') {

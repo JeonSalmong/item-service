@@ -6,10 +6,14 @@ import apps.itemservice.repository.member.JpaMemberRepository;
 import apps.itemservice.repository.member.MemberRepository;
 import apps.itemservice.service.item.ItemService;
 import apps.itemservice.service.member.MemberService;
+import io.micrometer.core.aop.CountedAspect;
+import io.micrometer.core.aop.TimedAspect;
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.persistence.EntityManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.sql.DataSource;
 
@@ -19,6 +23,7 @@ import javax.sql.DataSource;
  * 향후 메모리 리포지토리를 다른 리포지토리로 변경할 예정이기 때문
  */
 @EnableJpaAuditing
+@EnableScheduling
 @Configuration
 public class SpringBeanConfig {
     private final DataSource dataSource;
@@ -49,6 +54,26 @@ public class SpringBeanConfig {
     @Bean
     public ItemRepository itemRepository() {
         return new JpaItemRepository(em);
+    }
+
+    /**
+     * counted 메트릭 AOP 적용
+     * @param registry
+     * @return
+     */
+    @Bean
+    public CountedAspect countedAspect(MeterRegistry registry) {
+        return new CountedAspect(registry);
+    }
+
+    /**
+     * timed 메트릭 AOP 적용
+     * @param registry
+     * @return
+     */
+    @Bean
+    public TimedAspect timedAspect(MeterRegistry registry) {
+        return new TimedAspect(registry);
     }
 
 }

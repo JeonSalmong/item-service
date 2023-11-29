@@ -1,1 +1,19 @@
+pluginManagement {
+    //plugins {
+    //}
+    //resolutionStrategy {
+    //}
+    repositories {
+        mavenCentral()
+        maven {
+            credentials {
+                username = mavenUsername
+                password = mavenPassword
+            }
+            url = uri('https://pkgs.dev.azure.com/dlcon/_packaging/dlcon/maven/v1/')
+            allowInsecureProtocol = true
+        }
+    }
+}
+
 rootProject.name = 'item-service'

@@ -52,6 +52,8 @@ management:
     os:
       enabled: true
   endpoint:
+    metrics:
+      enabled: true
     shutdown:
       enabled: true
     health:
@@ -60,15 +62,35 @@ management:
     web:
       exposure:
         include: "*"
-        exclude: "env,beans"
+        exclude: "beans"
       base-path: "/manage"
     jmx:
       exposure:
         include: "health,info"
+
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+        pushgateway:
+          enabled: true
+          base-url: http://localhost:9091
+          push-rate: 5000
+          job: springInstance
+
+#prometheus:
+#  push:
+#    rate: 10000  #1000 = 1초
+#  job:
+#    name: springInstance
+#  grouping:
+#    key: appname
+#  pushgateway:
+#    url: localhost:9091
+
 logging:
   level:
     apps:
       itemservice:
         web:
           controller: debug
-

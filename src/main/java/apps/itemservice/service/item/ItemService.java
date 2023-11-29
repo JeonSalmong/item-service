@@ -33,4 +33,8 @@ public class ItemService {
     public void update(Long itemId, Item updateParam) {
         itemRepository.update(itemId, updateParam);
     }
+
+    public int getItemStock(Long id) {
+        return itemRepository.findById(id).getQuantity();
+    }
 }

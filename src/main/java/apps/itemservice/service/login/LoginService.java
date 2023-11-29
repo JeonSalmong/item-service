@@ -5,6 +5,9 @@ import lombok.RequiredArgsConstructor;
 import apps.itemservice.domain.entity.member.Member;
 import org.springframework.stereotype.Service;
 
+/**
+ * Session Manager 사용시 사용하는 서비스 (Spring Security 적용으로 사용하지 않음)
+ */
 @Service
 @RequiredArgsConstructor
 public class LoginService {

@@ -43,6 +43,9 @@ springboot sample project (spring version 3.0.12)
 #### 액츄에이터 적용
 * 기본path actuator -> manage로 변경 (Security에서 Admin만 접속 되도록 설정)
 #### 모니터링
-* springboot -> 프로메테우스(DB) -> 그라파나 적용
-* springbatch (push)-> 프로메테우스 push gateway <-(pull) 프로메테우스 -> 그라파나
+* 1차 : springboot -> 프로메테우스(DB) -> 그라파나 적용
+* 2차 : springboot (push)-> 프로메테우스 push gateway <-(pull) 프로메테우스 -> 그라파나
+* push gateway, 프로메테우수, 그라파나는 docker desktop으로 실행
+* Timer, Counter, Gauge 적용
+* HttpCounterConfig 구성(app 서버 ip, port 값 전달)
 
