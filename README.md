@@ -45,7 +45,8 @@ springboot sample project (spring version 3.0.12)
 #### 모니터링
 * 1차 : springboot -> 프로메테우스(DB) -> 그라파나 적용
 * 2차 : springboot (push)-> 프로메테우스 push gateway <-(pull) 프로메테우스 -> 그라파나
-* push gateway, 프로메테우수, 그라파나는 docker desktop으로 실행
+* push gateway, 프로메테우수, 그라파나는 docker desktop으로 실행 (C:\Study\springMVC\docker)
 * Timer, Counter, Gauge 적용
 * HttpCounterConfig 구성(app 서버 ip, port 값 전달)
+* pushgateway 서버 연결이 불가능 한 경우에 대한 예외처리는???
 
