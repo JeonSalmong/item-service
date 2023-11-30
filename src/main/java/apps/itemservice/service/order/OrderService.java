@@ -1,6 +1,8 @@
 package apps.itemservice.service.order;
 
 import apps.itemservice.core.trace.*;
+import apps.itemservice.core.trace.template.AbstractTemplate;
+import apps.itemservice.core.trace.template.TraceTemplate;
 import apps.itemservice.domain.entity.delivery.Delivery;
 import apps.itemservice.domain.entity.item.Item;
 import apps.itemservice.domain.entity.member.Member;
@@ -32,58 +34,73 @@ public class OrderService {
     private final ItemService itemService;
     private final MeterRegistry registry;
     private final LogTrace trace;
+    private final TraceTemplate template;
 
-    String packageName = getClass().getPackage().getName();
 
-    public OrderService(OrderRepository orderRepository, MemberRepository memberRepository, ItemService itemService, MeterRegistry registry, LogTrace trace) {
+    public OrderService(OrderRepository orderRepository
+            , MemberRepository memberRepository
+            , ItemService itemService
+            , MeterRegistry registry
+            , LogTrace trace
+            , TraceTemplate template) {
         this.orderRepository = orderRepository;
         this.memberRepository = memberRepository;
         this.itemService = itemService;
         this.registry = registry;
         this.trace = trace;
+        this.template = template;
     }
 
     /** 주문 */
     @Counted(ActuatorTags.ORDER_COUNTED)    //tag에 method 기준으로 분류해서 적용 됨
     public Long order(Long memberId, Long itemId, int count) {
 
-        //엔티티 조회
-        Optional<Member> member = memberRepository.findById(memberId);
-        Item item = itemService.findById(itemId);
+        AbstractTemplate<Long> template = new AbstractTemplate<Long>(trace) {
+            @Override
+            protected Long call() {
+                //엔티티 조회
+                Optional<Member> member = memberRepository.findById(memberId);
+                Item item = itemService.findById(itemId);
 
-        //배송정보 생성
-        Delivery delivery = new Delivery(member.get().getAddress());
-        //주문상품 생성
-        OrderItem orderItem = OrderItem.createOrderItem(item, item.getPrice(), count);
-        //주문 생성
-        Orders order = Orders.createOrder(member, delivery, orderItem);
+                //배송정보 생성
+                Delivery delivery = new Delivery(member.get().getAddress());
+                //주문상품 생성
+                OrderItem orderItem = OrderItem.createOrderItem(item, item.getPrice(), count);
+                //주문 생성
+                Orders order = Orders.createOrder(member, delivery, orderItem);
 
-        //주문 저장
-        orderRepository.save(order);
+                //주문 저장
+                orderRepository.save(order);
 
 //        Counter.builder("my.order")
 //                .tag("class", this.getClass().getName())
 //                .tag("method", "order")
 //                .description("order")
 //                .register(registry).increment();
-        return order.getId();
+                return order.getId();
+            }
+        };
+        return template.execute("OrderService.order()");
     }
 
     /** 주문 취소 */
     @Counted(ActuatorTags.ORDER_COUNTED)
     public void cancelOrder(Long orderId) {
 
-        //주문 엔티티 조회
-        Orders order = orderRepository.fineOne(orderId);
+        template.execute("OrderService.cancelOrder()", () -> {
+            //주문 엔티티 조회
+            Orders order = orderRepository.fineOne(orderId);
 
-        //주문 취소
-        order.cancel();
+            //주문 취소
+            order.cancel();
 
 //        Counter.builder("my.order")
 //                .tag("class", this.getClass().getName())
 //                .tag("method", "cancel")
 //                .description("order")
 //                .register(registry).increment();
+            return null;
+        });
     }
 
     /** 주문 검색 */

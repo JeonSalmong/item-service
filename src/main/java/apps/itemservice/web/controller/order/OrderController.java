@@ -5,6 +5,9 @@ import apps.itemservice.core.trace.LogTrace;
 import apps.itemservice.core.trace.TraceStatus;
 import apps.itemservice.core.trace.TraceV1;
 import apps.itemservice.core.trace.TraceV2;
+import apps.itemservice.core.trace.template.AbstractTemplate;
+import apps.itemservice.core.trace.template.TraceCallback;
+import apps.itemservice.core.trace.template.TraceTemplate;
 import apps.itemservice.domain.entity.item.Item;
 import apps.itemservice.domain.entity.member.Member;
 import apps.itemservice.domain.entity.order.OrderSearch;
@@ -40,6 +43,7 @@ public class OrderController {
     private final ItemService itemService;
     private final PayService payService;
     private final LogTrace trace;
+    private final TraceTemplate traceTemplate;
 
     @GetMapping("/add")
     public String order(@ModelAttribute("order") OrderForm order, Model model) {
@@ -52,17 +56,23 @@ public class OrderController {
 
     @PostMapping("/add")
     public String addOrder(@Validated @ModelAttribute("order") OrderForm form, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) throws IOException {
-        Item item = itemService.findById(form.getItemId());
-        try {
-            orderService.order(form.getMemberId(), form.getItemId(), form.getCount());
-        } catch (NotEnoughStockException e) {
-            //bindingResult.addError(new ObjectError("order", "재고량 초과 주문 할 수 없습니다. 현재고 = " + item.getQuantity()));
-            bindingResult.addError(new FieldError("order", "count", item.getQuantity(), false, null, null, "재고량 초과 주문 할 수 없습니다. 현재고 = " + item.getQuantity()));
-            return "order/orderForm";
-        }
 
-
-        return "redirect:/order/orders";
+        //익명내부클래스
+        AbstractTemplate<String> template = new AbstractTemplate<String>(trace) {
+            @Override
+            protected String call() {
+                Item item = itemService.findById(form.getItemId());
+                try {
+                    orderService.order(form.getMemberId(), form.getItemId(), form.getCount());
+                } catch (NotEnoughStockException e) {
+                    //bindingResult.addError(new ObjectError("order", "재고량 초과 주문 할 수 없습니다. 현재고 = " + item.getQuantity()));
+                    bindingResult.addError(new FieldError("order", "count", item.getQuantity(), false, null, null, "재고량 초과 주문 할 수 없습니다. 현재고 = " + item.getQuantity()));
+                    return "order/orderForm";
+                }
+                return "redirect:/order/orders";
+            }
+        };
+        return template.execute("OrderController.addOrder()");
     }
 
     @RequestMapping(value = "/orders", method = RequestMethod.GET)
@@ -84,14 +94,20 @@ public class OrderController {
     @RequestMapping(value = "/orders/{orderId}/cancel")
     public String processCancelBuy(@PathVariable("orderId") Long orderId, Model model) {
 
-        try {
-            orderService.cancelOrder(orderId);
-        } catch (RuntimeException e) {
-            MessageDto message = new MessageDto(e.getMessage(), "/order/orders", RequestMethod.GET, null);
-            return showMessageAndRedirect(message, model);
-        }
+        // 템플릿 콜백 패턴
+        return traceTemplate.execute("OrderController.processCancelBuy()", new TraceCallback<String>() {
+            @Override
+            public String call() {
+                try {
+                    orderService.cancelOrder(orderId);
+                } catch (RuntimeException e) {
+                    MessageDto message = new MessageDto(e.getMessage(), "/order/orders", RequestMethod.GET, null);
+                    return showMessageAndRedirect(message, model);
+                }
 
-        return "redirect:/order/orders";
+                return "redirect:/order/orders";
+            }
+        });
     }
 
     @RequestMapping(value = "/orders/{orderId}/pay")

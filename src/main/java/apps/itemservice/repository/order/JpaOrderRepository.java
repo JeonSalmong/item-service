@@ -1,6 +1,8 @@
 package apps.itemservice.repository.order;
 
 import apps.itemservice.core.trace.*;
+import apps.itemservice.core.trace.template.AbstractTemplate;
+import apps.itemservice.core.trace.template.TraceTemplate;
 import apps.itemservice.domain.entity.member.Member;
 import apps.itemservice.domain.entity.order.OrderSearch;
 import apps.itemservice.domain.entity.order.Orders;
@@ -17,21 +19,31 @@ import java.util.List;
 public class JpaOrderRepository implements OrderRepository {
     EntityManager em;
     private final LogTrace trace;
+    private final TraceTemplate template;
 
-    public JpaOrderRepository(EntityManager em, LogTrace trace) {
+    public JpaOrderRepository(EntityManager em, LogTrace trace, TraceTemplate template) {
         this.em = em;
         this.trace = trace;
+        this.template = template;
     }
 
     @Override
     public Orders save(Orders order) {
-        em.persist(order);
-        return order;
+        AbstractTemplate<Orders> template = new AbstractTemplate<Orders>(trace) {
+            @Override
+            protected Orders call() {
+                em.persist(order);
+                return order;
+            }
+        };
+        return template.execute("JpaOrderRepository.save()");
     }
 
     @Override
     public Orders fineOne(Long id) {
-        return em.find(Orders.class, id);
+        return template.execute("JpaOrderRepository.fineOne()", () -> {
+            return em.find(Orders.class, id);
+        });
     }
 
     @Override
@@ -44,7 +56,7 @@ public class JpaOrderRepository implements OrderRepository {
 
         TraceStatus statusT = null;
         try {
-            statusT = trace.begin("OrderRepository.findAll()");
+            statusT = trace.begin("JpaOrderRepository.findAll()");
 
             //주문 상태 검색
             if (orderSearch.getOrderStatus() != null) {
