@@ -1,6 +1,10 @@
 package apps.itemservice.web.controller.order;
 
 import apps.itemservice.core.exception.NotEnoughStockException;
+import apps.itemservice.core.trace.LogTrace;
+import apps.itemservice.core.trace.TraceStatus;
+import apps.itemservice.core.trace.TraceV1;
+import apps.itemservice.core.trace.TraceV2;
 import apps.itemservice.domain.entity.item.Item;
 import apps.itemservice.domain.entity.member.Member;
 import apps.itemservice.domain.entity.order.OrderSearch;
@@ -35,6 +39,7 @@ public class OrderController {
     private final MemberService memberService;
     private final ItemService itemService;
     private final PayService payService;
+    private final LogTrace trace;
 
     @GetMapping("/add")
     public String order(@ModelAttribute("order") OrderForm order, Model model) {
@@ -63,10 +68,17 @@ public class OrderController {
     @RequestMapping(value = "/orders", method = RequestMethod.GET)
     public String orderList(@ModelAttribute("orderSearch") OrderSearch orderSearch, Model model) {
 
-        List<Orders> orders = orderService.findOrders(orderSearch);
-        model.addAttribute("orders", orders);
-
-        return "order/orderList";
+        TraceStatus status = null;
+        try {
+            status = trace.begin("OrderController.orderList()");
+            List<Orders> orders = orderService.findOrders(orderSearch);
+            model.addAttribute("orders", orders);
+            trace.end(status);
+            return "order/orderList";
+        } catch (Exception e) {
+            trace.exception(status, e);
+            throw e; //예외를 꼭 다시 던져주어야 한다.
+        }
     }
 
     @RequestMapping(value = "/orders/{orderId}/cancel")

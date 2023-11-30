@@ -49,4 +49,5 @@ springboot sample project (spring version 3.0.12)
 * Timer, Counter, Gauge 적용
 * HttpCounterConfig 구성(app 서버 ip, port 값 전달)
 * pushgateway 서버 연결이 불가능 한 경우에 대한 예외처리는???
-
+#### 커스텀 LogTrace 적용
+* LogTrace의 TraceId 동시성 이슈를 쓰레드로컬로 해결

@@ -1,5 +1,6 @@
 package apps.itemservice.service.order;
 
+import apps.itemservice.core.trace.*;
 import apps.itemservice.domain.entity.delivery.Delivery;
 import apps.itemservice.domain.entity.item.Item;
 import apps.itemservice.domain.entity.member.Member;
@@ -18,6 +19,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 @Timed(ActuatorTags.ORDER_TIMED)
@@ -29,14 +31,16 @@ public class OrderService {
     private final MemberRepository memberRepository;
     private final ItemService itemService;
     private final MeterRegistry registry;
+    private final LogTrace trace;
 
     String packageName = getClass().getPackage().getName();
 
-    public OrderService(OrderRepository orderRepository, MemberRepository memberRepository, ItemService itemService, MeterRegistry registry) {
+    public OrderService(OrderRepository orderRepository, MemberRepository memberRepository, ItemService itemService, MeterRegistry registry, LogTrace trace) {
         this.orderRepository = orderRepository;
         this.memberRepository = memberRepository;
         this.itemService = itemService;
         this.registry = registry;
+        this.trace = trace;
     }
 
     /** 주문 */
@@ -89,7 +93,17 @@ public class OrderService {
 
     /** 주문 검색 */
     public List<Orders> findOrders(OrderSearch orderSearch) {
-        return orderRepository.findAll(orderSearch);
+        TraceStatus status = null;
+        try {
+            status = trace.begin("OrderService.findOrders()");
+            List<Orders> orders = new ArrayList<>();
+            orders = orderRepository.findAll(orderSearch);
+            trace.end(status);
+            return orders;
+        } catch (Exception e) {
+            trace.exception(status, e);
+            throw e;
+        }
     }
 
     /** 배송 상태 변경 */

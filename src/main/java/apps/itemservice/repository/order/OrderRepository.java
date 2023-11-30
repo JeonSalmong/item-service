@@ -1,5 +1,6 @@
 package apps.itemservice.repository.order;
 
+import apps.itemservice.core.trace.TraceId;
 import apps.itemservice.domain.entity.order.OrderSearch;
 import apps.itemservice.domain.entity.order.Orders;
 
