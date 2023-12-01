@@ -3,6 +3,7 @@ package apps.itemservice.web.config;
 import apps.itemservice.core.file.FileStore;
 import apps.itemservice.core.trace.FieldLogTrace;
 import apps.itemservice.core.trace.LogTrace;
+import apps.itemservice.core.trace.handler.LogTraceBasicHandler;
 import apps.itemservice.core.trace.template.TraceTemplate;
 import apps.itemservice.repository.item.ItemRepository;
 import apps.itemservice.repository.item.ItemRepositoryProxy;
@@ -31,6 +32,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.sql.DataSource;
+import java.lang.reflect.Proxy;
 
 
 /**
@@ -71,38 +73,7 @@ public class SpringBeanConfig {
         return new TimedAspect(registry);
     }
 
-//    @Bean
-//    public ItemController itemController() {
-//        return new BasicItemControllerImpl(itemService(), fileStore);
-//    }
-//    @Bean
-//    public ItemService itemService() {
-//        return new ItemServiceImpl(itemRepository());
-//    }
-//
-//    @Bean
-//    public ItemRepository itemRepository() {
-//        return new JpaItemRepository(em);
-//    }
-
-    // ItemController Proxy 주입
-    @Bean
-    public ItemController itemController(LogTrace logTrace) {
-        BasicItemControllerImpl basicItemController = new BasicItemControllerImpl(itemService(logTrace), fileStore);
-        return new ItemControllerProxy(basicItemController, logTrace);
-    }
-    @Bean
-    public ItemService itemService(LogTrace logTrace) {
-        ItemServiceImpl itemServiceImpl = new ItemServiceImpl(itemRepository(logTrace));
-        return new ItemServiceProxy(itemServiceImpl, logTrace);
-    }
-
-    @Bean
-    public ItemRepository itemRepository(LogTrace logTrace) {
-        JpaItemRepository jpaItemRepository = new JpaItemRepository(em);
-        return new ItemRepositoryProxy(jpaItemRepository, logTrace);
-    }
-
+    // 1. MemberController 일반
 //    @Bean
 //    public MemberService memberService() {
 //        return new MemberService(memberRepository());
@@ -115,6 +86,7 @@ public class SpringBeanConfig {
 //        return new JpaMemberRepository(em);
 //    }
 
+    // 2. MemberController Proxy
     @Bean
     public MemberController memberController(LogTrace logTrace) {
         MemberController memberController = new MemberController(memberService(logTrace));
@@ -129,6 +101,73 @@ public class SpringBeanConfig {
     public MemberRepository memberRepository(LogTrace logTrace) {
         JpaMemberRepository jpaMemberRepository = new JpaMemberRepository(em);
         return new MemberRepositoryProxy(jpaMemberRepository, logTrace);
+    }
+
+    // 1. ItemController 수동 주입
+//    @Bean
+//    public ItemController itemController() {
+//        return new BasicItemControllerImpl(itemService(), fileStore);
+//    }
+//    @Bean
+//    public ItemService itemService() {
+//        return new ItemServiceImpl(itemRepository());
+//    }
+//
+//    @Bean
+//    public ItemRepository itemRepository() {
+//        return new JpaItemRepository(em);
+//    }
+
+    // 2. ItemController Proxy 수동 주입
+//    @Bean
+//    public ItemController itemController(LogTrace logTrace) {
+//        BasicItemControllerImpl basicItemController = new BasicItemControllerImpl(itemService(logTrace), fileStore);
+//        return new ItemControllerProxy(basicItemController, logTrace);
+//    }
+//    @Bean
+//    public ItemService itemService(LogTrace logTrace) {
+//        ItemServiceImpl itemServiceImpl = new ItemServiceImpl(itemRepository(logTrace));
+//        return new ItemServiceProxy(itemServiceImpl, logTrace);
+//    }
+//
+//    @Bean
+//    public ItemRepository itemRepository(LogTrace logTrace) {
+//        JpaItemRepository jpaItemRepository = new JpaItemRepository(em);
+//        return new ItemRepositoryProxy(jpaItemRepository, logTrace);
+//    }
+
+    // 3. ItemController 동적 Proxy 수동 주입
+    private static final String[] PATTERNS = {"item*", "add*"};
+    @Bean
+    public ItemController itemController(LogTrace logTrace) {
+        ItemController itemController = new BasicItemControllerImpl(itemService(logTrace), fileStore);
+        ItemController proxy = (ItemController) Proxy.newProxyInstance(
+                ItemController.class.getClassLoader()
+                , new Class[]{ItemController.class}
+                , new LogTraceBasicHandler(itemController, logTrace, PATTERNS)
+        );
+        return proxy;
+    }
+    @Bean
+    public ItemService itemService(LogTrace logTrace) {
+        ItemService itemService = new ItemServiceImpl(itemRepository(logTrace));
+        ItemService proxy = (ItemService) Proxy.newProxyInstance(
+                ItemService.class.getClassLoader()
+                , new Class[]{ItemService.class}
+                , new LogTraceBasicHandler(itemService, logTrace, PATTERNS)
+        );
+        return proxy;
+    }
+
+    @Bean
+    public ItemRepository itemRepository(LogTrace logTrace) {
+        ItemRepository itemRepository = new JpaItemRepository(em);
+        ItemRepository proxy = (ItemRepository) Proxy.newProxyInstance(
+                ItemRepository.class.getClassLoader(),
+                new Class[]{ItemRepository.class},
+                new LogTraceBasicHandler(itemRepository, logTrace, PATTERNS)
+        );
+        return proxy;
     }
 
 }
