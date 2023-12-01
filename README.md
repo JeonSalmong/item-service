@@ -76,7 +76,7 @@ springboot sample project (spring version 3.0.12)
   * Strategy -> Callback
   * JdbcTemplate, RedisTemplate 등 XxxxTemplate 클래스가 대부분 이 패턴임
 * Order processCancelBuy()에 적용
-#### 프록시, 데코레이터 패턴
+#### 프록시(데코레이터) 패턴
 * 위 패턴 적용 LogTrace 도입 단점 보완
   * 원본 비지니스 코드 수정이 일어남
 * 아래 3가지 케이스 별로 원본 코드 수정하지 않고 LogTrace 도입하려면 Proxy패턴 적용으로 해결
@@ -99,5 +99,14 @@ springboot sample project (spring version 3.0.12)
     * 클래스에 final키워드가 붙으면 상속이 불가능하다.
     * 매서드에 final 키워드가 붙으면 해당 메서드를 오버라이딩 할 수 없다.
 * 단점: 너무 많은 proxy class가 필요하며, 중복 코드가 많이 발생함
-#### 동적프록시 
+#### JDK 동적프록시 
+* 리플렉션
+  * 리플렉션을 사용하면 클래스와 메서드의 메타정보를 사용해서 애플리케이션을 동적으로 유연하게 만들 수 있다.
+  * 리플렉션 기술은 런타임에 동작하기 때문에, 컴파일 시점에 오류를 잡을 수 없다.
+  * 리플렉션은 프레임워크 개발이나 또는 매우 일반적인 공통 처리가 필요할 때 부분적으로 주의해서 사용해야 한다.
+* 프록시패턴의 단점 보완: 프록시 객체를 동적으로 런타임에 개발자 대신 만들어준다.
+* JDK 동적 프록시는 인터페이스를 기반으로 프록시를 동적으로 만들어준다. 따라서 인터페이스가 필수이다.
+* V1 ItemController에 적용 (edit 호출시는 skip 하도록 패턴 적용 함)
+* 한계: 인터페이스가 필수
+#### CGLIB: Code Generator Library
 
