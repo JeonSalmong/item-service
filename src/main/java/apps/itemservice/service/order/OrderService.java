@@ -13,10 +13,10 @@ import apps.itemservice.domain.vo.DeliveryStatus;
 import apps.itemservice.repository.member.MemberRepository;
 import apps.itemservice.repository.order.OrderRepository;
 import apps.itemservice.service.item.ItemService;
+import apps.itemservice.service.item.ItemServiceImpl;
 import apps.itemservice.service.vo.ActuatorTags;
 import io.micrometer.core.annotation.Counted;
 import io.micrometer.core.annotation.Timed;
-import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 @Timed(ActuatorTags.ORDER_TIMED)
-@Service
+@Service    // 자동스캔 annotation, 선언하지 않으면 config에 Bean 등록 해서  줘야 함
 @Transactional
 public class OrderService {
 

@@ -19,17 +19,17 @@ import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/members")
+@RequestMapping
 public class MemberController {
 
     private final MemberService memberService;
 
-    @GetMapping("/add")
+    @GetMapping("/members/add")
     public String addForm(@ModelAttribute("member") Member member) {
         return "members/addMemberForm";
     }
 
-    @PostMapping("/add")
+    @PostMapping("/members/add")
     public String save(@Validated @ModelAttribute Member member, String city, String street, String zipcode, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -55,7 +55,7 @@ public class MemberController {
         return "redirect:/";
     }
 
-    @GetMapping(value = "/list")
+    @GetMapping(value = "/members/list")
     public String list(Model model) {
         List<Member> members = memberService.findMembers();
         model.addAttribute("members", members);

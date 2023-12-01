@@ -2,7 +2,7 @@ package apps.itemservice.web.controller.item;
 
 import apps.itemservice.domain.entity.item.ItemFile;
 import apps.itemservice.service.item.ItemService;
-import lombok.RequiredArgsConstructor;
+import apps.itemservice.service.item.ItemServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import apps.itemservice.domain.entity.item.Item;
 import apps.itemservice.core.file.FileStore;
@@ -12,7 +12,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
@@ -29,23 +28,26 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Controller
-@RequestMapping("/item/items")
-@RequiredArgsConstructor    //final 이 붙은 멤버변수만 사용해서 생성자를 자동으로 만들어준다.
-public class BasicItemController {
+//@RequiredArgsConstructor    //final 이 붙은 멤버변수만 사용해서 생성자를 자동으로 만들어준다.
+public class BasicItemControllerImpl implements ItemController {
 
 //    private final MemoryItemRepository memoryItemRepository;    //final 키워드를 빼면 안된다!, 그러면 ItemRepository 의존관계 주입이 안된다.
     private final ItemService itemService;
     private final FileStore fileStore;
 
-    @GetMapping
+    public BasicItemControllerImpl(ItemService itemService, FileStore fileStore) {
+        this.itemService = itemService;
+        this.fileStore = fileStore;
+    }
+
+    @Override
     public String items(Model model) {
         List<Item> items = itemService.findAll();
         model.addAttribute("items", items);
         return "item/items";
     }
 
-    @GetMapping("/{itemId}")
+    @Override
     public String item(@PathVariable long itemId, Model model) {
         Item item = itemService.findById(itemId);
         model.addAttribute("item", item);
@@ -56,7 +58,7 @@ public class BasicItemController {
      * 상품등록 폼
      * @return
      */
-    @GetMapping("/add")
+    @Override
     public String addForm(Model model) {
         model.addAttribute("item", new Item());
         return "item/addForm";
@@ -70,7 +72,7 @@ public class BasicItemController {
      * @param model
      * @return
      */
-//    @PostMapping("/add")
+    @Override
     public String addItemV1(@RequestParam String itemName,
                             @RequestParam int price,
                             @RequestParam Integer quantity,
@@ -88,7 +90,7 @@ public class BasicItemController {
      * @ModelAttribute("item") Item item
      * model.addAttribute("item", item); 자동 추가
      */
-    //@PostMapping("/add")
+    @Override
     public String addItemV2(@ModelAttribute("item") Item item, Model model) {
         itemService.save(item);
         //model.addAttribute("item", item); //자동 추가, 생략 가능
@@ -100,7 +102,7 @@ public class BasicItemController {
      * model.addAttribute(item); 자동 추가, 생략 가능
      * 생략시 model에 저장되는 name은 클래스명 첫글자만 소문자로 등록 Item -> item
      */
-    //@PostMapping("/add")
+    @Override
     public String addItemV3(@ModelAttribute Item item) {
         itemService.save(item);
         return "item/item";
@@ -110,7 +112,7 @@ public class BasicItemController {
      * @ModelAttribute 자체 생략 가능
      * model.addAttribute(item) 자동 추가
      */
-    //@PostMapping("/add")
+    @Override
     public String addItemV4(Item item) {
         itemService.save(item);
         return "item/item";
@@ -120,7 +122,7 @@ public class BasicItemController {
      * 새로고침시 등록 방지
      * PRG - Post/Redirect/Get
      */
-    //@PostMapping("/add")
+    @Override
     public String addItemV5(Item item) {
         itemService.save(item);
         return "redirect:/item/items/" + item.getId();
@@ -129,7 +131,7 @@ public class BasicItemController {
     /**
      * RedirectAttributes
      */
-    //@PostMapping("/add")
+    @Override
     public String addItemV6(Item item, RedirectAttributes redirectAttributes) {
         Item savedItem = itemService.save(item);
         redirectAttributes.addAttribute("itemId", savedItem.getId());
@@ -145,7 +147,7 @@ public class BasicItemController {
      * @param model
      * @return
      */
-//    @PostMapping("/add")
+    @Override
     public String addItemValidV1(@ModelAttribute Item item, RedirectAttributes redirectAttributes, Model model) {
         //검증 오류 결과를 보관
         Map<String, String> errors = new HashMap<>();
@@ -185,7 +187,7 @@ public class BasicItemController {
      * @param model
      * @return
      */
-//    @PostMapping("/add")
+    @Override
     public String addItemValidV2(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
 
         log.info("objectName={}", bindingResult.getObjectName());
@@ -244,7 +246,7 @@ public class BasicItemController {
      * @param model
      * @return
      */
-//    @PostMapping("/add")
+    @Override
     public String addItemValidV2_2(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
 
         //itemValidator.validate(item, bindingResult);
@@ -268,7 +270,7 @@ public class BasicItemController {
      * @param model
      * @return
      */
-    //@PostMapping("/add")
+    @Override
     public String addItemValidV3(@Validated @ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
 
         //검증에 실패하면 다시 입력 폼으로
@@ -290,7 +292,7 @@ public class BasicItemController {
      * @param model
      * @return
      */
-//    @PostMapping("/add")
+    @Override
     public String addItemValidV4(@Validated @ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
 
         //특정 필드가 아닌 복합 룰 검증
@@ -321,7 +323,7 @@ public class BasicItemController {
      * @param model
      * @return
      */
-    @PostMapping("/add")
+    @Override
     public String addItemValidV5(@Validated @ModelAttribute("item") ItemSaveForm form, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) throws IOException {
 
         //특정 필드가 아닌 복합 룰 검증
@@ -361,7 +363,7 @@ public class BasicItemController {
      * @param model
      * @return
      */
-    @GetMapping("/{itemId}/edit")
+    @Override
     public String editForm(@PathVariable Long itemId, Model model) {
         Item item = itemService.findById(itemId);
         model.addAttribute("item", item);
@@ -374,7 +376,7 @@ public class BasicItemController {
      * @param item
      * @return
      */
-//    @PostMapping("/{itemId}/edit")
+    @Override
     public String edit(@PathVariable Long itemId, @ModelAttribute Item item) {
         itemService.update(itemId, item);
         return "redirect:/item/items/{itemId}";
@@ -386,7 +388,7 @@ public class BasicItemController {
      * @param item
      * @return
      */
-//    @PostMapping("/{itemId}/edit")
+    @Override
     public String editV1(@PathVariable Long itemId, @Validated @ModelAttribute Item item, BindingResult bindingResult) {
 
         //특정 필드가 아닌 복합 룰 검증
@@ -414,7 +416,7 @@ public class BasicItemController {
      * @param form
      * @return
      */
-    @PostMapping("/{itemId}/edit")
+    @Override
     public String editV2(@PathVariable Long itemId, @Validated @ModelAttribute("item") ItemUpdateForm form, BindingResult bindingResult) throws IOException {
 
         //특정 필드가 아닌 복합 룰 검증
@@ -447,13 +449,12 @@ public class BasicItemController {
         return "redirect:/item/items/{itemId}";
     }
 
-    @ResponseBody
-    @GetMapping("/images/{filename}")
+    @Override
     public Resource downloadImage(@PathVariable String filename) throws MalformedURLException {
         return new UrlResource("file:" + fileStore.getFullPath(filename));
     }
 
-    @GetMapping("/attach/{itemId}")
+    @Override
     public ResponseEntity<Resource> downloadAttach(@PathVariable Long itemId) throws MalformedURLException {
         Item item = itemService.findById(itemId);
         String storeFileName = item.getAttachFile().getStoreFileName();

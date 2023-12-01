@@ -1,20 +1,12 @@
 package apps.itemservice.web.config.init;
 
 import apps.itemservice.service.item.ItemService;
-import apps.itemservice.service.order.OrderService;
-import io.micrometer.core.annotation.Counted;
-import io.micrometer.core.instrument.Counter;
+import apps.itemservice.service.item.ItemServiceImpl;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
-import org.springframework.retry.annotation.CircuitBreaker;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 @Slf4j
 @Configuration

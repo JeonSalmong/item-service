@@ -76,3 +76,28 @@ springboot sample project (spring version 3.0.12)
   * Strategy -> Callback
   * JdbcTemplate, RedisTemplate 등 XxxxTemplate 클래스가 대부분 이 패턴임
 * Order processCancelBuy()에 적용
+#### 프록시, 데코레이터 패턴
+* 위 패턴 적용 LogTrace 도입 단점 보완
+  * 원본 비지니스 코드 수정이 일어남
+* 아래 3가지 케이스 별로 원본 코드 수정하지 않고 LogTrace 도입하려면 Proxy패턴 적용으로 해결
+  * 빈 등록 3가지 케이스
+    * v1 인터페이스와 구현 클래스 - 스프링 빈으로 수동 등록 (Config에 @Bean으로 수동 등록)
+      * ItemController (implements)
+    * v2 인터페이스 없는 구체 클래스 - 스프링 빈으로 수동 등록 (Config에 @Bean으로 수동 등록)
+      * MemberController (extends)
+      * 빈 중복 등록 허용되어야 동작함 (application.yml 속성 추가 spring.allow-bean-definition-overriding: true)
+    * v3 컴포넌트 스캔으로 스프링 빈 자동 등록 (@Service, @Repository로 자동 등록)
+      * OrderController
+* 프록시패턴: 접근제어가 목적
+* 데코레이터 패턴: **객체에 추가 책임(기능)을 동적으로 추가**하고, 기능 확장을 위한 유연한 대안 제공
+* 인터페이스기반 프록시(implements) vs 클래스기반 프록시(extends)
+  * 인터페이스가 없어도 클래스기반으로 프록시를 생성할 수 있다.
+  * 클래스기반 프록시는 해당 클래스에만 적용할 수 있다.
+  * 인터페이스기반 프록시는 인터페이스만 같으면 모든 곳에 적용할 수 있다.
+  * 클래스기반 프록시 제약사항
+    * 부모 클래스의 생성자를 호출해야 한다.(super)
+    * 클래스에 final키워드가 붙으면 상속이 불가능하다.
+    * 매서드에 final 키워드가 붙으면 해당 메서드를 오버라이딩 할 수 없다.
+* 단점: 너무 많은 proxy class가 필요하며, 중복 코드가 많이 발생함
+#### 동적프록시 
+

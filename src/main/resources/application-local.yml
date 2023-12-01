@@ -20,6 +20,8 @@ jwt:
 file:
   dir: "C:/Study/springMVC/server_file/"
 spring:
+  main:
+    allow-bean-definition-overriding: true
   mustache:
     cache: false
   messages:
@@ -75,7 +77,7 @@ management:
         pushgateway:
           enabled: true
           base-url: http://localhost:9091
-          push-rate: 5000
+          push-rate: 50000
           job: springInstance
 
 #prometheus:

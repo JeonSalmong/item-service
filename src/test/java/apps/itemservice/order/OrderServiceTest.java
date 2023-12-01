@@ -9,7 +9,7 @@ import apps.itemservice.domain.entity.order.Orders;
 import apps.itemservice.domain.entity.valueType.Address;
 import apps.itemservice.domain.vo.OrderStatus;
 import apps.itemservice.repository.order.OrderRepository;
-import apps.itemservice.service.item.ItemService;
+import apps.itemservice.service.item.ItemServiceImpl;
 import apps.itemservice.service.member.MemberService;
 import apps.itemservice.service.order.OrderService;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ public class OrderServiceTest {
     @Autowired
     MemberService memberService;
     @Autowired
-    ItemService itemService;
+    ItemServiceImpl itemServiceImpl;
 
     @Test
     public void 상품주문() throws Exception {
@@ -115,7 +115,7 @@ public class OrderServiceTest {
         book.setItemName(name);
         book.setQuantity(stockQuantity);
         book.setPrice(price);
-        itemService.save(book);
+        itemServiceImpl.save(book);
         return book;
     }
 }
