@@ -9,4 +9,10 @@ public class AImpl implements AInterface {
         log.info("A 호출");
         return "a";
     }
+
+    @Override
+    public String find() {
+        log.info("A 찾기");
+        return "a";
+    }
 }

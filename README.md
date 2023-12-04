@@ -106,7 +106,27 @@ springboot sample project (spring version 3.0.12)
   * 리플렉션은 프레임워크 개발이나 또는 매우 일반적인 공통 처리가 필요할 때 부분적으로 주의해서 사용해야 한다.
 * 프록시패턴의 단점 보완: 프록시 객체를 동적으로 런타임에 개발자 대신 만들어준다.
 * JDK 동적 프록시는 인터페이스를 기반으로 프록시를 동적으로 만들어준다. 따라서 인터페이스가 필수이다.
-* V1 ItemController에 적용 (edit 호출시는 skip 하도록 패턴 적용 함)
+* v1 ItemController에 적용 
+  * 특정 매서드 이름의 조건 추가 PatternMatchUtils (edit 호출시는 skip 하도록 패턴 적용 함)
+* InvocationHandler
 * 한계: 인터페이스가 필수
 #### CGLIB: Code Generator Library
-
+* v2 처럼 상속의 경우 사용
+* MethodInterceptor
+#### 프록시팩토리(ProxyFactory)
+* 인터페이스가 있는 경우에는 JDK 동적 프록시를 적용하고, 그렇지 않은 경우에는 CGLIB를 적용하고자 할 경우
+* 공통 부가기능은 따로 만드는 것이 아니라 Advice에 적용
+* Client -> ProxyFactory(분기) -> InvocationHandler or MehtodInterceptor -> Advice(공통부가기능) -> Target
+* 프록시 팩토리의 기술 선택 방법
+  * 대상에 인터페이스가 있으면: JDK 동적 프록시, 인터페이스 기반 프록시
+  * 대상에 인터페이스가 없으면: CGLIB, 구체 클래스 기반 프록시
+  * proxyTargetClass=true` : CGLIB, 구체 클래스 기반 프록시, 인터페이스 여부와 상관없음
+* 포인트컷, 어드바이스, 어드바이저
+  * 포인트컷(`Pointcut`): 어디에 부가 기능을 적용할지, 어디에 부가 기능을 적용하지 않을지 판단하는 필터링 로
+  직이다. 주로 클래스와 메서드 이름으로 필터링 한다. 이름 그대로 어떤 포인트(Point)에 기능을 적용할지 하지 않
+  을지 잘라서(cut) 구분하는 것이다.
+  * 어드바이스(`Advice`): 이전에 본 것 처럼 프록시가 호출하는 부가 기능이다. 단순하게 프록시 로직이라 생각하면
+  된다.
+  * 어드바이저(`Advisor`): 단순하게 하나의 포인트컷과 하나의 어드바이스를 가지고 있는 것이다. 쉽게 이야기해서
+  포인트컷1 + 어드바이스1 이다.
+  * 조언자(`Advisor`)는 어디(`Pointcut`)에 조언(`Advice`)을 해야할지 알고 있다.
