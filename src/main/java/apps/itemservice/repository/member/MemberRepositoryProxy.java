@@ -1,7 +1,7 @@
 package apps.itemservice.repository.member;
 
-import apps.itemservice.core.trace.LogTrace;
-import apps.itemservice.core.trace.TraceStatus;
+import apps.itemservice.core.aop.trace.LogTrace;
+import apps.itemservice.core.aop.trace.TraceStatus;
 import apps.itemservice.domain.entity.member.Member;
 import apps.itemservice.domain.entity.member.Team;
 import lombok.RequiredArgsConstructor;

@@ -1,9 +1,8 @@
 package apps.itemservice.web.controller.member;
 
-import apps.itemservice.core.trace.LogTrace;
-import apps.itemservice.core.trace.TraceStatus;
+import apps.itemservice.core.aop.trace.LogTrace;
+import apps.itemservice.core.aop.trace.TraceStatus;
 import apps.itemservice.domain.entity.member.Member;
-import apps.itemservice.service.member.MemberService;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 

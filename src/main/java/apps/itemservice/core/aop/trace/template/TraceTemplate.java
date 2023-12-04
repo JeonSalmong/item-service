@@ -1,7 +1,7 @@
-package apps.itemservice.core.trace.template;
+package apps.itemservice.core.aop.trace.template;
 
-import apps.itemservice.core.trace.LogTrace;
-import apps.itemservice.core.trace.TraceStatus;
+import apps.itemservice.core.aop.trace.LogTrace;
+import apps.itemservice.core.aop.trace.TraceStatus;
 
 public class TraceTemplate {
     private final LogTrace trace;

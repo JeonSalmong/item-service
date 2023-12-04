@@ -1,6 +1,6 @@
 package apps.itemservice.web.config.runner;
 
-import apps.itemservice.service.order.PayService;
+import apps.itemservice.service.pay.PayService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class OrderRunner implements ApplicationRunner {
 
-    private final PayService orderService;
+//    private final PayService orderService;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {

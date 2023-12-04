@@ -1,4 +1,4 @@
-package apps.itemservice.service.order;
+package apps.itemservice.service.pay;
 
 import apps.itemservice.core.pay.PayClient;
 import lombok.RequiredArgsConstructor;

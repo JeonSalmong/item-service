@@ -1,7 +1,7 @@
 package apps.itemservice.web.controller.item;
 
-import apps.itemservice.core.trace.LogTrace;
-import apps.itemservice.core.trace.TraceStatus;
+import apps.itemservice.core.aop.trace.LogTrace;
+import apps.itemservice.core.aop.trace.TraceStatus;
 import apps.itemservice.domain.entity.item.Item;
 import apps.itemservice.web.controller.dto.ItemSaveForm;
 import apps.itemservice.web.controller.dto.ItemUpdateForm;

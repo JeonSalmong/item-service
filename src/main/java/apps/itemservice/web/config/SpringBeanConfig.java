@@ -1,32 +1,26 @@
 package apps.itemservice.web.config;
 
+import apps.itemservice.core.aop.LogTraceAop;
+import apps.itemservice.core.aop.trace.FieldLogTrace;
+import apps.itemservice.core.aop.trace.template.TraceTemplate;
 import apps.itemservice.core.file.FileStore;
-import apps.itemservice.core.trace.FieldLogTrace;
-import apps.itemservice.core.trace.LogTrace;
-import apps.itemservice.core.trace.advice.LogTraceAdvice;
-import apps.itemservice.core.trace.handler.LogTraceBasicHandler;
-import apps.itemservice.core.trace.template.TraceTemplate;
+import apps.itemservice.core.aop.trace.LogTrace;
+import apps.itemservice.core.aop.trace.advice.LogTraceAdvice;
+import apps.itemservice.core.aop.trace.advice.PackageLogTraceProxyPostProcessor;
 import apps.itemservice.repository.item.ItemRepository;
-import apps.itemservice.repository.item.ItemRepositoryProxy;
 import apps.itemservice.repository.item.JpaItemRepository;
 import apps.itemservice.repository.member.JpaMemberRepository;
 import apps.itemservice.repository.member.MemberRepository;
-import apps.itemservice.repository.member.MemberRepositoryProxy;
 import apps.itemservice.service.item.ItemService;
 import apps.itemservice.service.item.ItemServiceImpl;
-import apps.itemservice.service.item.ItemServiceProxy;
 import apps.itemservice.service.member.MemberService;
-import apps.itemservice.service.member.MemberServiceProxy;
 import apps.itemservice.web.controller.item.BasicItemControllerImpl;
 import apps.itemservice.web.controller.item.ItemController;
-import apps.itemservice.web.controller.item.ItemControllerProxy;
 import apps.itemservice.web.controller.member.MemberController;
-import apps.itemservice.web.controller.member.MemberControllerProxy;
 import io.micrometer.core.aop.CountedAspect;
 import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.persistence.EntityManager;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.Advisor;
 import org.springframework.aop.framework.ProxyFactory;
@@ -38,7 +32,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.sql.DataSource;
-import java.lang.reflect.Proxy;
 
 
 /**
@@ -244,6 +237,15 @@ public class SpringBeanConfig {
         ItemRepository proxy = (ItemRepository) factory.getProxy();
         log.info("ProxyFactory proxy={}, target={}", proxy.getClass(), itemRepository.getClass());
         return proxy;
+    }
+
+    /**
+     * Bean 후처리기 적용
+     * 컴포넌트 스캔 대상이 정상동작하지 않고 있음
+     */
+    //@Bean
+    public PackageLogTraceProxyPostProcessor logTraceProxyPostProcessor(LogTrace logTrace) {
+        return new PackageLogTraceProxyPostProcessor("xxx", getAdvisor(logTrace));
     }
 
     private Advisor getAdvisor(LogTrace logTrace) {

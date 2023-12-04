@@ -1,8 +1,8 @@
 package apps.itemservice.web.config;
 
-import apps.itemservice.core.trace.FieldLogTrace;
-import apps.itemservice.core.trace.LogTrace;
-import apps.itemservice.core.trace.template.TraceTemplate;
+import apps.itemservice.core.aop.trace.FieldLogTrace;
+import apps.itemservice.core.aop.trace.LogTrace;
+import apps.itemservice.core.aop.trace.template.TraceTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

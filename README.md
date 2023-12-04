@@ -51,34 +51,38 @@ springboot sample project (spring version 3.0.12)
 * HttpCounterConfig 구성(app 서버 ip, port 값 전달)
 * pushgateway 서버 연결이 불가능 한 경우에 대한 예외처리는???
 ### 스프링 고급
-#### 커스텀 LogTrace 적용
+#### 1) 커스텀 LogTrace 적용
 * LogTrace의 TraceId 동시성 이슈를 쓰레드로컬로 해결
 * Order orderList()에 적용
-#### 템플릿메서드패턴 적용
-* 커스텀 LogTrace 적용의 단점 보완
+* 한계
   * 코드 중복성
   * 비지니스로직/공통로직 혼재
   * 공통로직 수정시 모두 찾아서 수정해 줘야 함
+  * 해결책: 템플릿메서드패턴 적용
+#### 2) 템플릿메서드패턴 적용
 * Order add()에 적용
-#### 전략패턴 (Context - Strategy)
-* 템플릿메서드패턴의 단점 보완
+* 한계
   * 상속(자식클래스가 부모클래스의 기능을 전혀 사용하지 않지만 강하게 의존)
+  * 해결책: 전략패턴 적용
+#### 3) 전략패턴 (Context - Strategy)
 * 전략패턴 (Context - Strategy)
   * Context : 변하지 않는 템플릿 역할
   * Strategy : 변하는 알고리즘 역할(비지니스 로직)
   * Context에 Strategy 구현제를 주입하는 형태 (스프링의 의존관계 주입이 바로 전략 패턴)
-#### 템플릿콜백패턴 (Template - Callback) 적용
-* 전략패턴의 단점 보완
+* 한계
   * 전략패턴은 선조립(선주입)후실행 방식
   * 조립이후 전략 변경이 번거롭다
+  * 해결책: 템플릿콜백패턴 적용
+#### 4) 템플릿콜백패턴 (Template - Callback) 적용
 * 전략을 파라미터로 전달 받는 방식
   * Context -> Template
   * Strategy -> Callback
   * JdbcTemplate, RedisTemplate 등 XxxxTemplate 클래스가 대부분 이 패턴임
 * Order processCancelBuy()에 적용
-#### 프록시(데코레이터) 패턴
-* 위 패턴 적용 LogTrace 도입 단점 보완
+* 한계
   * 원본 비지니스 코드 수정이 일어남
+  * 해결책: 프록시 패턴 적용
+#### 5) 프록시(데코레이터) 패턴
 * 아래 3가지 케이스 별로 원본 코드 수정하지 않고 LogTrace 도입하려면 Proxy패턴 적용으로 해결
   * 빈 등록 3가지 케이스
     * v1 인터페이스와 구현 클래스 - 스프링 빈으로 수동 등록 (Config에 @Bean으로 수동 등록)
@@ -98,8 +102,10 @@ springboot sample project (spring version 3.0.12)
     * 부모 클래스의 생성자를 호출해야 한다.(super)
     * 클래스에 final키워드가 붙으면 상속이 불가능하다.
     * 매서드에 final 키워드가 붙으면 해당 메서드를 오버라이딩 할 수 없다.
-* 단점: 너무 많은 proxy class가 필요하며, 중복 코드가 많이 발생함
-#### JDK 동적프록시 
+* 한계
+  * 너무 많은 proxy class가 필요하며, 중복 코드가 많이 발생함
+  * 해결책: JDK 동적프록시 적용 
+#### 6) JDK 동적프록시 
 * 리플렉션
   * 리플렉션을 사용하면 클래스와 메서드의 메타정보를 사용해서 애플리케이션을 동적으로 유연하게 만들 수 있다.
   * 리플렉션 기술은 런타임에 동작하기 때문에, 컴파일 시점에 오류를 잡을 수 없다.
@@ -109,11 +115,17 @@ springboot sample project (spring version 3.0.12)
 * v1 ItemController에 적용 
   * 특정 매서드 이름의 조건 추가 PatternMatchUtils (edit 호출시는 skip 하도록 패턴 적용 함)
 * InvocationHandler
-* 한계: 인터페이스가 필수
-#### CGLIB: Code Generator Library
+* 한계
+  * 인터페이스가 필수
+  * 인터페이스가 없는 구체클래스 적용할 수 없음
+  * 해결책: CGLIB 적용
+#### 7) CGLIB: Code Generator Library
 * v2 처럼 상속의 경우 사용
 * MethodInterceptor
-#### 프록시팩토리(ProxyFactory)
+* 한계
+  * 인터페이스 or 구체클래스 상황에 따라 일일히 별도 적용
+  * 해결책: 프록시팩토리 적용
+#### 8) 프록시팩토리(ProxyFactory)
 * 인터페이스가 있는 경우에는 JDK 동적 프록시를 적용하고, 그렇지 않은 경우에는 CGLIB를 적용하고자 할 경우
 * 공통 부가기능은 따로 만드는 것이 아니라 Advice에 적용
 * Client -> ProxyFactory(분기) -> InvocationHandler or MehtodInterceptor -> Advice(공통부가기능) -> Target
@@ -130,3 +142,15 @@ springboot sample project (spring version 3.0.12)
   * 어드바이저(`Advisor`): 단순하게 하나의 포인트컷과 하나의 어드바이스를 가지고 있는 것이다. 쉽게 이야기해서
   포인트컷1 + 어드바이스1 이다.
   * 조언자(`Advisor`)는 어디(`Pointcut`)에 조언(`Advice`)을 해야할지 알고 있다.
+* 한계
+  * Proxy 설정을 일일히 다 해줘야 함
+  * v3 처럼 컴포넌트 스캔으로 등록된 Bean은 Proxy 설정 불가능 함
+  * 해결책: 빈 후처리기 적용
+#### 9) 빈 후처리기
+* 객체를 조작할 수도 있고, 완전히 다른 객체로 바꿔치기 하는 것도 가능
+* 스프링빈 등록 과정
+  * 생성 -> 전달 -> 빈 후처리기(바꿔치기) -> 등록
+#### 10) @Aspect프록시
+* @Aspect를 보고 Advisor로 변환해서 저장
+* Advisor를 기반으로 프록시를 생성
+ ![img.png](img.png)

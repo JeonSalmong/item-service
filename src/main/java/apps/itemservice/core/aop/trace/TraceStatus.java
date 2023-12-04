@@ -1,4 +1,4 @@
-package apps.itemservice.core.trace;
+package apps.itemservice.core.aop.trace;
 
 public class TraceStatus {
     private TraceId traceId;

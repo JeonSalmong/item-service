@@ -1,10 +1,9 @@
 package apps.itemservice.service.member;
 
-import apps.itemservice.core.trace.LogTrace;
-import apps.itemservice.core.trace.TraceStatus;
+import apps.itemservice.core.aop.trace.LogTrace;
+import apps.itemservice.core.aop.trace.TraceStatus;
 import apps.itemservice.domain.entity.member.Member;
 import apps.itemservice.domain.entity.member.Team;
-import apps.itemservice.repository.member.MemberRepository;
 
 import java.util.List;
 import java.util.Optional;
