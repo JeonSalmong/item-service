@@ -1,6 +1,10 @@
 # item-service
 springboot sample project (spring version 3.0.12)
 
+실행 준비
+1. h2 console 실행 (필수)
+2. docker 하이버네이트 등 실행 (옵션, 실행하지 않으면 오류 로그 찍힘)
+
 ### 스프링 기본
 #### Filter
 * log 필터 적용
@@ -82,7 +86,7 @@ springboot sample project (spring version 3.0.12)
 * 한계
   * 원본 비지니스 코드 수정이 일어남
   * 해결책: 프록시 패턴 적용
-#### 5) 프록시(데코레이터) 패턴
+#### 5) 프록시(데코레이터) 패턴**
 * 아래 3가지 케이스 별로 원본 코드 수정하지 않고 LogTrace 도입하려면 Proxy패턴 적용으로 해결
   * 빈 등록 3가지 케이스
     * v1 인터페이스와 구현 클래스 - 스프링 빈으로 수동 등록 (Config에 @Bean으로 수동 등록)
@@ -150,7 +154,38 @@ springboot sample project (spring version 3.0.12)
 * 객체를 조작할 수도 있고, 완전히 다른 객체로 바꿔치기 하는 것도 가능
 * 스프링빈 등록 과정
   * 생성 -> 전달 -> 빈 후처리기(바꿔치기) -> 등록
+* 빈 후처리 일련의 과정을 Spring에서 자동으로 해 주는 것이 @Aspect프록시
 #### 10) @Aspect프록시
+* Aspect: 부가 기능과 부가 기능을 어디에 적용할지 선택하는 기능을 합해서 하나의 모듈로 만듦
 * @Aspect를 보고 Advisor로 변환해서 저장
 * Advisor를 기반으로 프록시를 생성
  ![img.png](img.png)
+* @Aspect프록시 적용하여 횡단 관심사를 처리하는 것이 곧 AOP(관점지향프로그래밍)
+#### 11) AOP(Aspect-Oriented Programming)
+* AOP는 OOP를 대체하는 것이 아니라 보조역할
+ ![img_1.png](img_1.png)
+* 횡단 관심사의 깔끔한 모듈화
+  * 오류 검사 및 처리
+  * 동기화
+  * 성능 최적화(캐싱)
+  * 모니터링 및 로깅
+* 적용 방식
+  * 런타임 시점(프록시) << 스프링AOP 방식
+* 적용 위치 (Join point)
+  * Spring Bean의 매서드 실행으로 제한 됨
+* 포인트컷(Pointcut)
+  * 조인 포인트 중에서 어드바이스가 적용될 위치
+* 타겟(Target)
+  * 어드바이스를 받는 객체, 포인트컷으로 결정
+* 어드바이스(Advice)
+  * 부가 기능
+  * Around(주변), Before(전), After(후)와 같은 다양한 종류의 어드바이스가 있음
+* 애스펙트(Aspect)
+  * 어드바이스 + 포인트컷을 모듈화 한 것
+* 어드바이저(Advisor)
+  * 하나의 어드바이스와 하나의 포인트 컷으로 구성
+* 위빙(Weaving)
+  * 포인트컷으로 결정한 타켓의 조인 포인트에 어드바이스를 적용하는 것
+* AOP 프록시
+  * AOP 기능을 구현하기 위해 만든 프록시 객체, 스프링에서 AOP 프록시는 JDK 동적 프록시 또는 CGLIB
+    프록시

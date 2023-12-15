@@ -1,8 +1,8 @@
 package apps.itemservice.member;
 
-import apps.itemservice.domain.entity.member.Member;
-import apps.itemservice.domain.entity.member.Team;
-import apps.itemservice.service.member.MemberService;
+import apps.itemservice.web.domain.entity.member.Member;
+import apps.itemservice.web.domain.entity.member.Team;
+import apps.itemservice.web.domain.member.MemberService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

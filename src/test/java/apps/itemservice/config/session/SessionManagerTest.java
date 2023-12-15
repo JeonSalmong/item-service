@@ -1,7 +1,7 @@
 package apps.itemservice.config.session;
 
-import apps.itemservice.domain.entity.member.Member;
-import apps.itemservice.core.session.SessionManager;
+import apps.itemservice.web.domain.entity.member.Member;
+import apps.itemservice.platform.session.SessionManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;

@@ -1,10 +1,10 @@
 package apps.itemservice.config.converter;
 
-import apps.itemservice.core.converter.type.IpPort;
-import apps.itemservice.core.converter.typeconverter.IntegerToStringConverter;
-import apps.itemservice.core.converter.typeconverter.IpPortToStringConverter;
-import apps.itemservice.core.converter.typeconverter.StringToIntegerConverter;
-import apps.itemservice.core.converter.typeconverter.StringToIpPortConverter;
+import apps.itemservice.platform.converter.type.IpPort;
+import apps.itemservice.platform.converter.typeconverter.IntegerToStringConverter;
+import apps.itemservice.platform.converter.typeconverter.IpPortToStringConverter;
+import apps.itemservice.platform.converter.typeconverter.StringToIntegerConverter;
+import apps.itemservice.platform.converter.typeconverter.StringToIpPortConverter;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.convert.support.DefaultConversionService;
 

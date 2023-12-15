@@ -1,6 +1,6 @@
 package apps.itemservice.config.formatter;
 
-import apps.itemservice.core.formatter.MyNumberFormatter;
+import apps.itemservice.platform.formatter.MyNumberFormatter;
 import org.junit.jupiter.api.Test;
 
 import java.text.ParseException;
